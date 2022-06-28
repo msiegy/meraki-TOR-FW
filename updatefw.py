@@ -6,11 +6,11 @@ from dotenv import load_dotenv
 load_dotenv()
 MerakiAPIKey = os.environ.get('MerakiAPIKey')
 networkid = os.environ.get('networkid')
-url = os.environ.get('url')
+nodesurl = os.environ.get('nodesurl')
 
 ipv4 = []
 
-response = requests.get(url)
+response = requests.get(nodesurl)
 open("tornodes.json", "wb").write(response.content)
 
 f = open ('tornodes.json', "r")
@@ -18,12 +18,9 @@ f = open ('tornodes.json', "r")
 # Read TOR Guard Nodes from file and extract IPV4 only addresses
 data = json.loads(f.read())
 
-length = len(data['relays'])
-i=0
-while(i < length):
+for item in data['relays']:
      #print(data['relays'][i]['or_addresses'][0])
-     ipv4.append(data['relays'][i]['or_addresses'][0].split(":", 1)[0])
-     i = i + 1 
+     ipv4.append(item['or_addresses'][0].split(":", 1)[0])
 
 #convert list to string, keeping commas and removing quotes.
 addresses= ",".join(ipv4)
@@ -44,10 +41,6 @@ payload = '''{
         }
     ]
 }'''
-
-#import ipdb
-#ipdb.set_trace()
-#print (payload)
 
 headers = {
     "Content-Type": "application/json",
