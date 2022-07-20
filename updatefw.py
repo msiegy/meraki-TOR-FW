@@ -10,12 +10,14 @@ nodesurl = os.environ.get('nodesurl')
 
 ipv4 = []
 
+print("Pulling down TOR Guard node list\n")
 response = requests.get(nodesurl)
 open("tornodes.json", "wb").write(response.content)
 
 f = open ('tornodes.json', "r")
   
 # Read TOR Guard Nodes from file and extract IPV4 only addresses
+print("Reading list and formatting for Meraki FW rules\n")
 data = json.loads(f.read())
 
 for item in data['relays']:
@@ -48,6 +50,8 @@ headers = {
     "X-Cisco-Meraki-API-Key": MerakiAPIKey
 }
 
+print("Updating L3 FW rules for network: ", networkid, "\n")
 response = requests.request('PUT', url, headers=headers, data = payload)
 
 print(response.text.encode('utf8'))
+print("\n", len(ipv4), " MX FW rules updated\n")
